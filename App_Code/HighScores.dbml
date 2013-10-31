@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="baltanet_Games" Class="HighScoresDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=mssql2008.ukdns.biz;Initial Catalog=baltanet_Games;User ID=baltanet_balta" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="baltanet_GamesConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="baltanet_balta.MegaJump_Highscores" Member="MegaJump_Highscores">
+    <Type Name="MegaJump_Highscore">
+      <Column Name="HighscoreID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="HighScore" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+</Database>
