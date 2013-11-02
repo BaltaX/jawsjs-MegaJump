@@ -26,10 +26,7 @@ function PlayState() {
         //console.log(jaws.game_loop.tick_duration/1000);
         m_mainModel.update(jaws.game_loop.tick_duration / 1000);
         if (m_mainModel.getLevelCleared()) { jaws.switchGameState(MenuState); }
-        if (m_mainModel.getGameOver()) {
-            //Get numberofcoins
-
-            jaws.switchGameState(GameOverState);
+        if (m_mainModel.getGameOver()) {jaws.switchGameState(GameOverState);
         }
 
     };
@@ -64,6 +61,8 @@ function MenuState() {
 
 
 function GameOverState() {
+
+//This code should be moved to View/HighScoresView.draw()
     var i = 0;
     var xmlData;
     var writeAtLine = 0;
@@ -71,7 +70,7 @@ function GameOverState() {
     //Load highscore data
         $.ajax({
             type: "GET",
-            url: "getHighScores.aspx",
+            url: "getHighScores.aspx", 
             dataType: "xml",
             success: function (xml) { xmlData = xml; }
         });
@@ -79,19 +78,24 @@ function GameOverState() {
 
     }
 
+    //The part of this code that refers to highscores should be moved to View/HighScoresView.draw()
     this.draw = function () {
         var m_gameOver = new jaws.Sprite({ image: "js/Assets/gameOver.png", x: 0, y: 200 });
-        //Continue to draw game where it ended
+
+        //Continue to draw game where it ended SKA VARA KVAR!!!!!
         jaws.previous_game_state.draw();
+
         m_gameOver.draw();
-        jaws.context.font = "bold 20pt terminal";
-        jaws.context.lineWidth = 20
-        jaws.context.fillStyle = "White";
+        
         //jaws.context.strokeStyle = "rgba(200,200,200,0.0)"
         //jaws.context.fillText("Du fixade ihop " + jaws.previous_game_state.getNumberOfCoins() + " pengar!", 300, 200)
         //console.log("Du samlade ihop " + jaws.previous_game_state.getNumberOfCoins() + " pengar!"); //By this the states can communicate like different classes
 
         if (jaws.pressedWithoutRepeat("space")) { jaws.switchGameState(MenuState); }
+
+        jaws.context.font = "bold 20pt terminal";
+        jaws.context.lineWidth = 20
+        jaws.context.fillStyle = "White";
 
         $('Highscore', xmlData).each(function (i) {
             writeAtLine++;

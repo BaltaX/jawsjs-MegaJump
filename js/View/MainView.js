@@ -28,12 +28,12 @@
     var m_realBrickSound2 = jaws.assets.get("js/Assets/Bricksound2.mp3");
     var m_realBrickSound3 = jaws.assets.get("js/Assets/Bricksound3.mp3");
     var m_end = jaws.assets.get("js/Assets/end.mp3");
-
+    var m_highScoresView;
     var m_scoreBoardbg = new jaws.Rect(0, 0, 640, 50);
     var m_scoreboard;
     var m_score_NumberOfCoins;
     var m_bgLevelA = new jaws.Sprite({ image: "js/Assets/bgLevelA.jpg", x: 0, y: 0 });
-
+    var m_gameOverView = new GameOverView();
 
     //var m_brickSound2 = jaws.assets.get("js/Assets/coin.wav");
     var m_currentBrickSound;
@@ -50,7 +50,7 @@
     m_currentBrickSound = 0;
     m_currentRealBrickSound = 0;
     m_scoreboard = new jaws.Sprite({ image: "js/Assets/scoreboard.png", x: 0, y: 20 });
-
+    m_gameOverView = new GameOverView();
     //m_canvas = document.getElementById("canvas");
     //m_ctx = m_canvas.getContext("2d");
 
@@ -63,6 +63,7 @@
     m_wasLoaded = false;
     m_tileWidth = m_tileHeight = 64;
 
+    //Listen to events
     $(document).on("hitsCoin", function () {
         if (m_currentBrickSound == 0) { m_brickSound.play(); $(".Debug").html("Spelar ljud 0"); }
         else if (m_currentBrickSound == 1) { m_brickSound1.play(); $(".Debug").html("Spelar ljud 1"); }
@@ -98,6 +99,18 @@
         m_currentRealBrickSound++;
         if (m_currentRealBrickSound == 3) { m_currentRealBrickSound = 0; }
     });
+
+    this.GameOverSetup = function () {
+        m_gameOverView.setup();
+    }
+
+    this.GameOverDraw = function () {
+        m_gameOverView.draw();
+    }
+
+    
+
+
 
 
     this.Draw = function (a_mainModel) {
@@ -190,6 +203,10 @@
         if (jaws.pressed("right")) { m_viewport.move(3, 0); }
 
         //Get model coordinates
+    }
+
+    this.drawHighscores=function(){
+    m_highScoresView.draw();
     }
 
 }
