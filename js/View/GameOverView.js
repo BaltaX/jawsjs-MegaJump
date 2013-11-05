@@ -26,7 +26,7 @@
 
 
         //Check if player wats to continue
-        if (jaws.pressedWithoutRepeat("space")) { jaws.switchGameState(MenuState); }
+        //if (jaws.pressedWithoutRepeat("space")) { jaws.switchGameState(MenuState); }
 
         //Draw game over background graphics
         m_gameOver.draw();
