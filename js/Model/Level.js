@@ -21,7 +21,7 @@
     
 
     //Get file information with jQuery
-    $.get('LevelA.txt', function (data) {
+    $.get(a_url, function (data) {
 
         //Now file has loaded
         file = data;

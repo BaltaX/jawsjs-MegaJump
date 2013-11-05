@@ -34,6 +34,7 @@
     var m_score_NumberOfCoins;
     var m_bgLevelA = new jaws.Sprite({ image: "js/Assets/bgLevelA.jpg", x: 0, y: 0 });
     var m_gameOverView = new GameOverView();
+    var m_levelClearedView = new LevelClearedView();
 
     //var m_brickSound2 = jaws.assets.get("js/Assets/coin.wav");
     var m_currentBrickSound;
@@ -100,6 +101,7 @@
         if (m_currentRealBrickSound == 3) { m_currentRealBrickSound = 0; }
     });
 
+    //Code for drawing GameOver screen
     this.GameOverSetup = function () {
         m_gameOverView.setup();
     }
@@ -108,9 +110,14 @@
         m_gameOverView.draw();
     }
 
-    
+    //Code for drawing Level Cleared
+    this.LevelClearedSetup = function () {
+        m_levelClearedView.setup();
+    }
 
-
+    this.LevelClearedDraw = function () {
+        m_levelClearedView.draw();
+    }
 
 
     this.Draw = function (a_mainModel) {

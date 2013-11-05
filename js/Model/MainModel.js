@@ -10,6 +10,7 @@
     var m_levelWidth;
     var m_url;
     var m_wasLoaded;
+
     var m_brickSound;
     var m_levelCleared;
     var m_numberOfCoins;
@@ -21,12 +22,14 @@
     var m_highestScore;
     var m_intermediateScore;
     var m_gameOver;
+    var m_levels;
+    var m_currentLevel;
 
 
     //Instantiate variables
 
-    m_level = new Level("LevelA.txt");
-    m_wasLoaded = false;
+    //m_level = new Level("LevelA.txt");
+    //m_wasLoaded = false;
     m_brickSound = jaws.assets.get("js/Assets/glass-clink.wav");
     m_levelCleared = false;
     m_numberOfCoins = 0;
@@ -36,8 +39,9 @@
     m_score = 0;
     m_highestScore = 0;
     m_gameOver = false;
-
-
+    m_levels = new Array(new Level("LevelA.txt"), new Level("LevelB.txt"), new Level("LevelB.txt"));
+    m_wasLoaded = new Array(false, false, false);
+    m_currentLevel = 0;
 
     //m_tiles, m_levelWidth and m_levelHeight are set below when we know that all level resources have been loaded
 
@@ -55,22 +59,55 @@
 
     //setters
     this.setGameOver = function (gameOver) { m_gameOver = gameOver; };
+    this.setCurrentLevel = function (currentLevel) { m_currentLevel = currentLevel; };
+    
+    this.prepareForNewLevel = function () {
+        m_levelCleared = false;
+        m_maxHeight = 0;
+    }
+
+    this.prepareForNewGame = function () {
+        m_levelCleared = false;
+        m_levels[0] = new Level("LevelA.txt");
+        m_levels[1] = new Level("LevelB.txt");
+        m_levels[2] = new Level("LevelA.txt");
+        m_wasLoaded[0] = false;
+        m_wasLoaded[1] = false;
+        m_wasLoaded[2] = false;
+
+        m_numberOfCoins = 0;
+        m_currentHeight = 0;
+        m_maxHeight = 0;
+        m_gameTime = 0;
+        m_score = 0;
+        m_highestScore = 0;
+        m_gameOver = false;
+        m_player.setSpeedY(-20);
+        m_player.setSpeedY(0);
+
+        //m_levels = new Array(new Level("LevelA.txt"), new Level("LevelB.txt"), new Level("LevelB.txt"));
+        //m_wasLoaded = new Array(false, false, false);
+        m_currentLevel = 0;
+
+    }
+
 
     //The game logic update occurs here
     this.update = function (a_elapsedTime) {
 
         //If level is loaded get it, but only once and set remaining properties
-        if (m_level.getLevelLoaded() & !m_wasLoaded) {
-            m_tiles = m_level.getTileMap();
-            m_levelHeight = m_level.getLevelHeight();
-            m_levelWidth = m_level.getLevelWidth();
-            m_wasLoaded = true;
+        if (m_levels[m_currentLevel].getLevelLoaded() & !m_wasLoaded[m_currentLevel]) {
+            m_tiles = m_levels[m_currentLevel].getTileMap();
+            console.log(m_tiles);
+            m_levelHeight = m_levels[m_currentLevel].getLevelHeight();
+            m_levelWidth = m_levels[m_currentLevel].getLevelWidth();
+            m_wasLoaded[m_currentLevel] = true;
             m_player = new Player(m_levelWidth / 2, m_levelHeight - 2, 0, -20);
             m_startTime = new Date().getTime();
         }
 
         //If everything has loaded and level has been loaded
-        else if (m_level.getLevelLoaded() & m_wasLoaded) {
+        else if (m_levels[m_currentLevel].getLevelLoaded() & m_wasLoaded[m_currentLevel]) {
 
 
 
@@ -102,7 +139,7 @@
             //If megaman has fallen too far, end game
             if (m_currentHeight < m_maxHeight - 17) {
                 m_gameOver = true;
-                
+
                 $.event.trigger({
                     type: "gameOver"
                 });

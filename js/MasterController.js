@@ -1,8 +1,14 @@
-function MasterController(){
-   
+function MasterController() {
+
     //Declare variables
     var m_mainView;
     var m_mainModel;
+    var m_initialized;
+    var m_currentLevel;
+
+    //Initiate variables
+    m_initialized = false;
+    m_currentLevel = 0;
 
     function PlayState() {
         //var m_mainModel;
@@ -12,11 +18,17 @@ function MasterController(){
         var player;
         var goal;
         var apa1 = 98;
+
         this.getNumberOfCoins = function () { return m_mainModel.getNumberOfCoins(); }; //Use getters to let states communicate with jaws.previous_state f e
+
         this.setup = function () {
-            m_mainView = new MainView();
-            m_mainModel = new MainModel();
+            if (!m_initialized) {
+                m_mainView = new MainView();
+                m_mainModel = new MainModel();
+                m_initialized = true;
+            }
             m_backgroundTrack.play();
+            m_mainModel.setCurrentLevel(m_currentLevel);
         };
 
 
@@ -29,7 +41,7 @@ function MasterController(){
 
             //console.log(jaws.game_loop.tick_duration/1000);
             m_mainModel.update(jaws.game_loop.tick_duration / 1000);
-            if (m_mainModel.getLevelCleared()) { jaws.switchGameState(MenuState); }
+            if (m_mainModel.getLevelCleared()) { jaws.switchGameState(LevelClearedState); }
             if (m_mainModel.getGameOver()) {
                 jaws.switchGameState(GameOverState);
             }
@@ -46,8 +58,8 @@ function MasterController(){
 
 
 
-    MenuState=function() {
-        
+    function MenuState() {
+
         var m_bg = new jaws.Sprite({ image: "js/Assets/MenuBackground.jpg", x: 0, y: 0 });
 
         jaws.clear();
@@ -58,31 +70,45 @@ function MasterController(){
         this.draw = function () {
             if (jaws.pressed("enter")) { jaws.switchGameState(PlayState); }
             m_bg.draw();
-
         }
     }
 
 
     function GameOverState() {
-
-        
-
         this.setup = function () {
             m_mainView.GameOverSetup();
+
         }
 
         this.draw = function () {
             jaws.previous_game_state.draw();
             m_mainView.GameOverDraw();
-            if (jaws.pressed("space")) {jaws.switchGameState(MenuState); }
+            if (jaws.pressed("space")) {
+                m_mainModel.prepareForNewGame();
+                m_currentLevel = 0;
+                jaws.switchGameState(MenuState);
+            }
+        }
+    }
+
+    function LevelClearedState() {
+        this.setup = function () {
+            m_mainView.LevelClearedSetup();
+            m_currentLevel++;
+            m_mainModel.prepareForNewLevel();
+            console.log(m_currentLevel);
         }
 
-        
+        this.draw = function () {
+            jaws.previous_game_state.draw();
+            m_mainView.LevelClearedDraw();
+            if (jaws.pressed("space")) { jaws.switchGameState(PlayState); }
+        }
     }
 
 
     jaws.onload = function () {
-        
+
         //Add the assets here
         jaws.assets.add("js/Assets/coin.png");
         jaws.assets.add("js/Assets/empty.png");
@@ -111,6 +137,7 @@ function MasterController(){
         jaws.assets.add("js/Assets/Bricksound3.mp3");
         jaws.assets.add("js/Assets/gameOver.png");
         jaws.assets.add("js/Assets/end.mp3");
+        jaws.assets.add("js/Assets/levelCleared.png");
 
         jaws.start(MenuState);
     };
