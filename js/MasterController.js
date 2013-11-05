@@ -10,45 +10,44 @@ function MasterController() {
     m_initialized = false;
     m_currentLevel = 0;
 
+    //**************************************
+    //This is the state for running the game
+    //**************************************
     function PlayState() {
-        //var m_mainModel;
-        //var m_mainView;
+
         var m_backgroundTrack = jaws.assets.get("js/Assets/Soundtrack2.mp3");
 
-        var player;
-        var goal;
-        var apa1 = 98;
-
-        this.getNumberOfCoins = function () { return m_mainModel.getNumberOfCoins(); }; //Use getters to let states communicate with jaws.previous_state f e
-
         this.setup = function () {
+
+            //This code is only run the first time the game runs
+            //Thus model and view are re-used between games
             if (!m_initialized) {
                 m_mainView = new MainView();
                 m_mainModel = new MainModel();
                 m_initialized = true;
             }
             m_backgroundTrack.play();
-            m_mainModel.setCurrentLevel(m_currentLevel);
         };
 
 
-        //This method is called 30 times a second
-        //Here we can change x and y coordinates, color etc
         this.update = function () {
             //Check for user input
             if (jaws.pressed("left")) { m_mainModel.movePlayerLeft(); }
             if (jaws.pressed("right")) { m_mainModel.movePlayerRight(); }
 
-            //console.log(jaws.game_loop.tick_duration/1000);
             m_mainModel.update(jaws.game_loop.tick_duration / 1000);
-            if (m_mainModel.getLevelCleared()) { jaws.switchGameState(LevelClearedState); }
+
+            if (m_mainModel.getLevelCleared()) {
+                jaws.switchGameState(LevelClearedState);
+            }
+
             if (m_mainModel.getGameOver()) {
                 jaws.switchGameState(GameOverState);
             }
 
         };
 
-        //And every time update has been called, draw is called also
+
         this.draw = function () {
 
             m_mainView.Draw(m_mainModel);
@@ -57,32 +56,51 @@ function MasterController() {
 
 
 
-
+    //**************************************
+    //This is the state for showing the menu
+    //**************************************
     function MenuState() {
 
+    //This code should be placed in view
         var m_bg = new jaws.Sprite({ image: "js/Assets/MenuBackground.jpg", x: 0, y: 0 });
 
+        //Clear the canvas
         jaws.clear();
 
         m_bg.x = 0;
         m_bg.y = 0;
 
         this.draw = function () {
-            if (jaws.pressed("enter")) { jaws.switchGameState(PlayState); }
+
+            //Gamestate exit logic
+            if (jaws.pressed("enter")) {
+                jaws.switchGameState(PlayState);
+            }
+
             m_bg.draw();
         }
     }
 
-
+    //***************************************
+    //This is the state for showing game over
+    //***************************************
     function GameOverState() {
-        this.setup = function () {
-            m_mainView.GameOverSetup();
 
+        this.setup = function () {
+            //Load the highscores
+            m_mainView.GameOverSetup();
         }
 
         this.draw = function () {
+            //What to draw (previous_game_state is PlayState)
+
+            //Continue to draw game where it stopped (freeze version)
             jaws.previous_game_state.draw();
+
+            //and draw gameover background over it
             m_mainView.GameOverDraw();
+
+            //Gamestate exit logic
             if (jaws.pressed("space")) {
                 m_mainModel.prepareForNewGame();
                 m_currentLevel = 0;
@@ -91,21 +109,26 @@ function MasterController() {
         }
     }
 
+    //***********************************************
+    //This is the state for showing level was cleared
+    //***********************************************
     function LevelClearedState() {
         this.setup = function () {
+            //Load background image to draw
             m_mainView.LevelClearedSetup();
-            m_currentLevel++;
             m_mainModel.prepareForNewLevel();
-            console.log(m_currentLevel);
         }
 
         this.draw = function () {
             jaws.previous_game_state.draw();
             m_mainView.LevelClearedDraw();
-            if (jaws.pressed("space")) { jaws.switchGameState(PlayState); }
+
+            //Gamestate exit logic
+            if (jaws.pressed("space")) {
+                jaws.switchGameState(PlayState);
+            }
         }
     }
-
 
     jaws.onload = function () {
 
@@ -138,7 +161,6 @@ function MasterController() {
         jaws.assets.add("js/Assets/gameOver.png");
         jaws.assets.add("js/Assets/end.mp3");
         jaws.assets.add("js/Assets/levelCleared.png");
-
         jaws.start(MenuState);
     };
 

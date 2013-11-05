@@ -35,8 +35,6 @@
     var m_bgLevelA = new jaws.Sprite({ image: "js/Assets/bgLevelA.jpg", x: 0, y: 0 });
     var m_gameOverView = new GameOverView();
     var m_levelClearedView = new LevelClearedView();
-
-    //var m_brickSound2 = jaws.assets.get("js/Assets/coin.wav");
     var m_currentBrickSound;
     var m_currentRealBrickSound;
 
@@ -48,19 +46,11 @@
     m_star = new jaws.Sprite({ image: "js/Assets/star.png", x: 0, y: 0 });
     m_fog = new jaws.Sprite({ image: "js/Assets/fog.png", x: 0, y: 0 });
     m_player = new jaws.Sprite({ image: "js/Assets/Megaman.png", x: 0, y: 0 });
+    m_scoreboard = new jaws.Sprite({ image: "js/Assets/scoreboard.png", x: 0, y: 20 });
+
     m_currentBrickSound = 0;
     m_currentRealBrickSound = 0;
-    m_scoreboard = new jaws.Sprite({ image: "js/Assets/scoreboard.png", x: 0, y: 20 });
     m_gameOverView = new GameOverView();
-    //m_canvas = document.getElementById("canvas");
-    //m_ctx = m_canvas.getContext("2d");
-
-//    for (var i = 0; 1 < 10; i++) {
-//        m_brickSound[i] = jaws.assets.get("js/Assets/coin.wav");
-//    }
-   
-
-
     m_wasLoaded = false;
     m_tileWidth = m_tileHeight = 64;
 

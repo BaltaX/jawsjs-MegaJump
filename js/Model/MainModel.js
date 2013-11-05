@@ -24,6 +24,7 @@
     var m_gameOver;
     var m_levels;
     var m_currentLevel;
+    var m_accumulatedHeight;
 
 
     //Instantiate variables
@@ -42,6 +43,7 @@
     m_levels = new Array(new Level("LevelA.txt"), new Level("LevelB.txt"), new Level("LevelB.txt"));
     m_wasLoaded = new Array(false, false, false);
     m_currentLevel = 0;
+    m_accumulatedHeight = 0;
 
     //m_tiles, m_levelWidth and m_levelHeight are set below when we know that all level resources have been loaded
 
@@ -60,10 +62,12 @@
     //setters
     this.setGameOver = function (gameOver) { m_gameOver = gameOver; };
     this.setCurrentLevel = function (currentLevel) { m_currentLevel = currentLevel; };
-    
+
     this.prepareForNewLevel = function () {
         m_levelCleared = false;
         m_maxHeight = 0;
+        m_currentLevel++;
+        m_accumulatedHeight += 400;
     }
 
     this.prepareForNewGame = function () {
@@ -114,8 +118,6 @@
             //Update player position and speed
             m_player.update(a_elapsedTime);
 
-
-
             //Dont let megaman go left of game
             if (m_player.getPositionX() < 0) { m_player.setPositionX(0); }
 
@@ -126,12 +128,11 @@
             if (m_player.getPositionY() < 1) { m_levelCleared = true; }
 
             //Which tile is megaman currently in?
-            //$(".Debug").html("Current x tile is x: " + Math.round(m_player.getPositionX()) + " y: " + Math.round(m_player.getPositionY()));
             var m_megamanX = Math.round(m_player.getPositionX());
             var m_megamanY = Math.round(m_player.getPositionY());
 
             //Calculate current height
-            m_currentHeight = 400 - m_megamanY; //400 should not be hard coded here
+            m_currentHeight = 400 - m_megamanY+m_accumulatedHeight; //400 should not be hard coded here
 
             //If currentHeight is higher than maxheight, set maxHeight to this new value
             if (m_currentHeight > m_maxHeight) { m_maxHeight = m_currentHeight; }
